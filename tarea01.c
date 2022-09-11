@@ -106,11 +106,12 @@ void backup_aux(char *name){
   
   FILE *fptr1, *fptr2;
   char *namereturn, c;
-  int i = 0;
+  int i = 1;
   
+  namereturn = name[0];
   while( name[i] != '\0'){
-	  if( name[i] == ".") namereturn += ".bak";
-	  else namereturn += name[i]
+	  if( name[i] == '.') namereturn += '.bak';
+	  else namereturn += name[i];
 	  i++;
   }
   
@@ -127,3 +128,5 @@ void backup_aux(char *name){
 	  c = fgetc(fptr1);
   }
 }
+
+//notas: aun no me funciona que los hijos puedan realizar el trabajo de copiar el archivo.
