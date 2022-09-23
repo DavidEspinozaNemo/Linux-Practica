@@ -3,7 +3,7 @@
 ## Integrantes
 ```
   David Jose Espinoza Soto - 2016012024
-  Junior
+  Junior Eduardo Segura Ballestero
 ```
 
 ## Introducción
