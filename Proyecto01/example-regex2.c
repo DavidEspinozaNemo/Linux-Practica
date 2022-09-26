@@ -64,7 +64,7 @@ void search_regular_expression (char *file_name, char *regular_expression){
 }
 
 int main(){
-	char *expression = "ipsum";
+    char *expression = "ipsum";
     char *file_name = "file-a.txt";
-	search_regular_expression(file_name, expression);
+    search_regular_expression(file_name, expression);
 }
