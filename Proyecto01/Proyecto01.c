@@ -11,6 +11,7 @@
 
 // definicion del mensage
 #define MSGSZ 200
+#define DUCTSIZE 1000
 struct filemessage {
     long type;
     char namefile[MSGSZ];
@@ -31,30 +32,50 @@ void sendfilemessage(char *mensagetxt){
 }
 
 //funcion para buscar una exprecion regular
-void search_regular_expression (){
+void search_regular_expression (char *regular_expression){
     //abre el archivo filename
     //aplica regcom y regexec a cada linea del archivo
-
+	FILE *fptr;
+	char sentence[DUCTSIZE];
+		
+	//Abre el archivo llamado msg.namefile
+	fptr = open(msg.namefile, "r");
+		
+	if( fptr != NULL ){ //si pudo abrir el archivo
+		
+		//lectura linea x linea del archivo	
+			
+		while(sentence != EOF){
+				
+			fgets(sentence, DUCTSIZE, fptr);
+			printf("%s \n", sentence);
+		};
+			
+		fclose(fptr); //cerrando el archivo
+	} //si no pudo abrir el archivo
+	else{
+		printf("file %s can't be opened \n", msg.namefile);
+	}
 }
 
 // funcion para recibir el mensage
-void getmessage(){
+void getmessage(char *regular_expression){
     key_t msqkey = 999;
     int msqid = msgget(msqkey, IPC_CREAT | S_IRUSR | S_IWUSR);
     msg.type = 1;
 
-    if( totalmessage <= 0 ){
-        printf("No message \n");
-    }
-    else{
+    if( totalmessage > 0 ){
         msgrcv(msqid, &msg, MSGSZ, 1, 0);
         if ( msgrcv == NULL ) exit(0); //si o recibe el mensaje se va.
-        printf("Message received, file  %s in process\n",msg.namefile);
+        printf("Message received, file %s in process\n",msg.namefile);
 
+		totalmessage--;
         //search_regular_expression( filename, regular_expression)
-        totalmessage--;
+        	
     }
-    
+    else{
+		printf("No message \n");
+    }
 }
 
 // funcion grep;
@@ -64,16 +85,17 @@ void getmessage(){
 
 int main(){
 
-    sendfilemessage("filea.txt");
-    sendfilemessage("fileb.txt");
-    sendfilemessage("filec.txt");
-    getmessage();
-    getmessage();
-    getmessage();
-    getmessage();
-    sendfilemessage("filed.txt");
-    getmessage();
-    getmessage();
+    sendfilemessage("archivo_a.txt");
+	/*sendfilemessage("archivo_b.txt");
+	sendfilemessage("archivo_c.txt");
+	sendfilemessage("archivo_d.txt");
+	sendfilemessage("archivo_e.txt");*/
+	//grep("lorem kcsdmc ...", N); -> tiempo ejecucion, imprimir documento y linea expresion regular
+	// archivo_a, linea 14
+	// ....
+	// 45 milisigundos
+	// N = 5
+    getmessage("expresion regular");
 
     return 0;
 }
