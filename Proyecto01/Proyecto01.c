@@ -36,8 +36,8 @@ void sendfilemessage(char *mensagetxt){
 //funcion para buscar una exprecion regular
 void search_regular_expression (char *file_name, char *regular_expression){
 	
-	//printf("%s \n", regular_expression);
-	FILE * fp;
+    //printf("%s \n", regular_expression);
+    FILE * fp;
     char * line = NULL;
     size_t len = 0;
     ssize_t read;
@@ -83,7 +83,7 @@ void search_regular_expression (char *file_name, char *regular_expression){
     fclose(fp);
     if (line)
         free(line);
-    exit(EXIT_SUCCESS);
+    //exit(EXIT_SUCCESS);
 }
 
 // funcion para recibir el mensage
