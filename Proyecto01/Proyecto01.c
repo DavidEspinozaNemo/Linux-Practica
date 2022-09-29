@@ -6,8 +6,10 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+
+#define ARRAY_SIZE(arr) (sizeof((arr)) / sizeof((arr)[0]))
 
 // definicion del mensage
 #define MSGSZ 200
@@ -32,30 +34,56 @@ void sendfilemessage(char *mensagetxt){
 }
 
 //funcion para buscar una exprecion regular
-void search_regular_expression (char *regular_expression){
-    //abre el archivo filename
-    //aplica regcom y regexec a cada linea del archivo
-	FILE *fptr;
-	char sentence[DUCTSIZE];
-		
-	//Abre el archivo llamado msg.namefile
-	fptr = open(msg.namefile, "r");
-		
-	if( fptr != NULL ){ //si pudo abrir el archivo
-		
-		//lectura linea x linea del archivo	
-			
-		while(sentence != EOF){
-				
-			fgets(sentence, DUCTSIZE, fptr);
-			printf("%s \n", sentence);
-		};
-			
-		fclose(fptr); //cerrando el archivo
-	} //si no pudo abrir el archivo
-	else{
-		printf("file %s can't be opened \n", msg.namefile);
-	}
+void search_regular_expression (char *file_name, char *regular_expression){
+	
+    //printf("%s \n", regular_expression);
+    FILE * fp;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+
+    char *s;
+    regex_t regex;
+    regmatch_t pmatch[1];
+    regoff_t off, len_regex, off_total;
+
+    char newfile_name[100] = "./";
+    strcat(newfile_name, file_name);
+
+    fp = fopen( newfile_name , "r");
+
+    if (fp == NULL)
+        exit(EXIT_FAILURE);
+    
+    if (regcomp(&regex, regular_expression, REG_NEWLINE))
+        exit(EXIT_FAILURE);
+
+    while ((read = getline(&line, &len, fp)) != -1) {
+        //printf("Retrieved line of length %zu:\n", read);
+        //printf("%s", line);
+        s = line;
+        off_total = 0;
+        //printf("Matches:\n");
+        for (int i = 0; ; i++) {
+            if (regexec(&regex, s, ARRAY_SIZE(pmatch), pmatch, 0))
+                break;
+
+            off = pmatch[0].rm_so + (s - line);
+            off_total += off;
+            len_regex = pmatch[0].rm_eo - pmatch[0].rm_so;
+            //printf("#%d:\n", i);
+            //printf("offset = %jd; length = %jd\n", (intmax_t) off,(intmax_t) len_regex);
+            //printf("substring = \"%.*s\"\n", len_regex, s + pmatch[0].rm_so);
+            printf("similarity found in the document %s, line %jd; \n", file_name, (intmax_t) off_total );
+
+            s += pmatch[0].rm_eo;
+        }
+    }
+
+    fclose(fp);
+    if (line)
+        free(line);
+    //exit(EXIT_SUCCESS);
 }
 
 // funcion para recibir el mensage
@@ -70,7 +98,7 @@ void getmessage(char *regular_expression){
         printf("Message received, file %s in process\n",msg.namefile);
 
 		totalmessage--;
-        //search_regular_expression( filename, regular_expression)
+        search_regular_expression( msg.namefile, regular_expression);
         	
     }
     else{
@@ -85,7 +113,7 @@ void getmessage(char *regular_expression){
 
 int main(){
 
-    sendfilemessage("archivo_a.txt");
+    sendfilemessage("file-a.txt");
 	/*sendfilemessage("archivo_b.txt");
 	sendfilemessage("archivo_c.txt");
 	sendfilemessage("archivo_d.txt");
@@ -95,7 +123,7 @@ int main(){
 	// ....
 	// 45 milisigundos
 	// N = 5
-    getmessage("expresion regular");
+    getmessage("ipsum");
 
     return 0;
 }
