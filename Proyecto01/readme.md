@@ -120,12 +120,11 @@ void getmessage(char *regular_expression){
         if ( msgrcv == NULL ) exit(0); //si o recibe el mensaje se va.
         printf("Message received, file %s in process\n",msg.namefile);
 
-		    totalmessage--;
-        search_regular_expression( msg.namefile, regular_expression);
-        	
+	totalmessage--;
+	search_regular_expression( msg.namefile, regular_expression);	
     }
     else{
-		printf("No message \n");
+    	printf("No message \n");
     }
 }
 ```
@@ -135,3 +134,5 @@ void getmessage(char *regular_expression){
 ## Pruebas de rendimiento
 
 ## Conclusiones
+
+Programar en Linux es toda una experiencia, tubimos problemas desde el comando **chmod +x file.txt** para darle los permisos de lectura a los archivos de texto utilizados, hasta la forma de compilar un programa en c que utiliza hilos, yo use el comando **gcc -o ejecutable programa.c -lpthread** para mis pruebas.
