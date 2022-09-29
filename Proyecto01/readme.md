@@ -48,6 +48,88 @@ Esta es la estructura donde se almacenan los nombres de los archivos donde se va
 
 ## Descripción detallada y explicación de los componentes principales del programa
 
+La función sendfilemessage resive una cadena de caracteres ( la expreción regular ), y la envia a una cola de mensages con la instrucción msgsnd, internamente maneja el total de mensajes enviados con la variable totalmessage.
+
+```c
+void sendfilemessage(char *mensagetxt){
+    key_t msqkey = 999;
+    int msqid = msgget(msqkey, IPC_CREAT | S_IRUSR | S_IWUSR);
+    msg.type = 1;
+    strcpy(msg.namefile, mensagetxt);
+    msgsnd(msqid,(void *)&msg, sizeof(msg.namefile) ,IPC_NOWAIT);
+    printf("Message sent\n");
+    totalmessage++;
+}
+```
+La función search_regular_expression resive dos cadenas de caracteres el nombre del archivo de texto, y la expresión regular. Primero crea las variableas que va a utilizar, intenta abrir el archivo en modo lectura, intenta crear el regex, y al final leer el archivo linea x linea hasta llegar al final, y utilizando el regex va buscando la expresion regular.
+
+```c
+void search_regular_expression (char *file_name, char *regular_expression){
+    FILE * fp;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+
+    char *s;
+    regex_t regex;
+    regmatch_t pmatch[1];
+    regoff_t off, len_regex, off_total;
+
+    char newfile_name[100] = "./";
+    strcat(newfile_name, file_name);
+
+    fp = fopen( newfile_name , "r");
+
+    if (fp == NULL)
+        exit(EXIT_FAILURE);
+    
+    if (regcomp(&regex, regular_expression, REG_NEWLINE))
+        exit(EXIT_FAILURE);
+
+    while ((read = getline(&line, &len, fp)) != -1) {
+        s = line;
+        off_total = 0;
+        for (int i = 0; ; i++) {
+            if (regexec(&regex, s, ARRAY_SIZE(pmatch), pmatch, 0))
+                break;
+
+            off = pmatch[0].rm_so + (s - line);
+            off_total += off;
+            len_regex = pmatch[0].rm_eo - pmatch[0].rm_so;
+            printf("similarity found in the document %s, line %jd; \n", file_name, (intmax_t) off_total );
+
+            s += pmatch[0].rm_eo;
+        }
+    }
+
+    fclose(fp);
+    if (line)
+        free(line);
+}
+```
+La funcion getmessage resive la expresión regular, y es la función que va a ser llamada por cada hilo. Mientras la cantidad de mensages en la cola sea mayor que cero, aplicara la función search_regular_expression.
+
+```c
+void getmessage(char *regular_expression){
+    key_t msqkey = 999;
+    int msqid = msgget(msqkey, IPC_CREAT | S_IRUSR | S_IWUSR);
+    msg.type = 1;
+
+    if( totalmessage > 0 ){
+        msgrcv(msqid, &msg, MSGSZ, 1, 0);
+        if ( msgrcv == NULL ) exit(0); //si o recibe el mensaje se va.
+        printf("Message received, file %s in process\n",msg.namefile);
+
+		    totalmessage--;
+        search_regular_expression( msg.namefile, regular_expression);
+        	
+    }
+    else{
+		printf("No message \n");
+    }
+}
+```
+
 ## Mecanismo de creación y comunicación de hilos
 
 ## Pruebas de rendimiento
