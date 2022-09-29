@@ -37,12 +37,12 @@ En este caso se utilizará un pool de hilos estático, es decir, el programa cre
 
 El proyecto consta de funciones, la primera es el main donde se insertan los nombre de los archivos que se van a usar, luego se llama a la función grep con la expresión regular y la cantidad de hilos a usar, la funcón sendfilemessage envia a la cola el nombre de los archivos que vamos a utilizar, la función grep es quien crea y administra los hilos, y cada uno de estos hilos ejecuta la función search_regular_expression.
 
-´´´c
+```c
 struct filemessage {
     long type;
     char namefile[MSGSZ];
 }msg;
-´´´
+```
 
 Esta es la estructura donde se almacenan los nombres de los archivos donde se van a buscar las expreciones regulares.
 
