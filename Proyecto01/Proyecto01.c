@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <regex.h>
 #include <pthread.h>
+ #include <time.h>
 
 #define ARRAY_SIZE(arr) (sizeof((arr)) / sizeof((arr)[0]))
 
@@ -25,6 +26,10 @@ int totalmessage = 0;
 
 //mutex
 pthread_mutex_t mutex;
+
+//para medir el tiempo de ejecución
+clock_t start, end;
+double cpu_time_used;
 
 //funcion para enviar un mensage
 void sendfilemessage(char *mensagetxt){
@@ -143,6 +148,9 @@ void grep(char *regular_expression, int cant_thread){
 
 int main(){
 	
+	//inicia el tiempo
+	start = clock();
+	
 	//inicializacion del mutex
 	pthread_mutex_init(&mutex, NULL);
 	
@@ -155,6 +163,11 @@ int main(){
 	
 	//finalizar el mutex
 	pthread_mutex_destroy(&mutex);
+	
+	//caba el tiempo
+	end = clock();
+	cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+	printf("Execution time: %f\n", cpu_time_used);
 
     return 0;
 }
