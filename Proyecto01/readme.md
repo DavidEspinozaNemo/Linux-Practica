@@ -162,10 +162,22 @@ void grep(char *regular_expression, int cant_thread){
 }
 ```
 
-## Mecanismo de creación y comunicación de hilos
-
 ## Pruebas de rendimiento
+
+Nuestro mecanismo para medir el tiempo fue con la libreria time, utilizamos 6 archivos con un texto obtenido del libro Don Quijote de la Mancha, y buscamos la misma expresión regular pero alterando el numero de hilo, la siguiente tabla muestra el promedio del tiempo de ejecución por cada 10 pruebas contraladas.
+
+|  Cantidad de hilos          | Promedio de tiempo ejecución |
+|-----------------------------|:----------------------------:|
+|12 hilos                     |     0,0013386                |
+| 6 hilos                     |     0,0006174                |
+| 5 hilos                     |     0,0008504                |
+| 4 hilos                     |     0,0006927                |
+| 3 hilos                     |     0,0005530                |
+| 2 hilos                     |     0,0005029                |
 
 ## Conclusiones
 
 Programar en Linux es toda una experiencia, tubimos problemas desde el comando **chmod +x file.txt** para darle los permisos de lectura a los archivos de texto utilizados, hasta la forma de compilar un programa en c que utiliza hilos, yo use el comando **gcc -o ejecutable programa.c -lpthread** para mis pruebas.
+
+podemos concluir que el numero opimo, para este algoritmo, son 2 hilos.
+
