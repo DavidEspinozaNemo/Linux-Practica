@@ -7,7 +7,7 @@
 
 void* routine(){
     printf("Test Thread \n");
-	sleep(3);
+	sleep(1);
 	printf("Ending thread \n");
 }
  
