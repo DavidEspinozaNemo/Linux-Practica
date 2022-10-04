@@ -1,3 +1,6 @@
+// Administrador de la memoria: autor Armando Arce
+// Modificado: David Jose Espinoza Soto - 2016012024
+// Modificacion: void *realloc, void debug
 // malloc.h
 typedef long Align; // alineamiento al límite superior
 union header {      // encabezado de bloque
@@ -78,4 +81,26 @@ void *malloc(unsigned long nbytes) {
       if ((p = morecore(nunits)) == NULL)
         return NULL; // nada libre
   }
+}
+
+//imprime informacion de los diferentes bloques
+void debug(){
+
+    printf("Block Alignment :     %p \n", &base.x);
+
+    printf("Memory Block Address: %p \n", base.s.ptr->s.ptr);
+    printf("Memory Block Size   : %u \n", base.s.ptr->s.size);
+    printf("Memory Block Address: %p \n", base.s.ptr->s.ptr->s.ptr);
+    printf("Memory Block Size   : %u \n", base.s.ptr->s.ptr->s.size);
+    //a partir que aui vuelve al mismo sitio
+
+}
+
+/*intenta extender la memoria asignada al tamaño indicado por size,
+  de no lograrlo debe solicitar un nuevo segmento de memoria y copiar el contenido anterior en el nuevo segmento.*/
+void *realloc(void *ptr, unsigned long size){
+
+    printf("hola mundo");
+    //la verdad no entiendo el codigo, no sabria decir donde inicia un bloque y donde termina otra. Hice la funcion debug pero me dejo màs o menos igual de confundido.
+    //trate de hacer una copia de malloc, pero reemplazando p por ptr, pero me sale violacion de segmento, envio esto por enviar algo, perdon.
 }
