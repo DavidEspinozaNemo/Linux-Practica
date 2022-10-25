@@ -1,5 +1,8 @@
 // https://www.youtube.com/watch?v=zFHjKCVwS48
 // https://victorroblesweb.es/2013/12/02/comandos-ftp-en-la-consola/
+
+// https://www.binarytides.com/socket-programming-c-linux-tutorial/
+// https://whatismyipaddress.com/
 #include <stdio.h>
 #include <stdlib.h>
 
