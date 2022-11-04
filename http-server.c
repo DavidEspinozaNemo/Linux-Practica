@@ -17,10 +17,11 @@ int main() {
                   "Content-type: text/html\r\n\r\n";
     // send message
     char message[10000];
+
+    // read file
     FILE *fp;
-    char *line;
-    size_t buffersize = 300;
-    size_t characters;
+    char letter; // un caracter para ir sacando de uno en uno del documento
+    int i; // un indice para ir concardenando
 
     // Create a socket
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -95,24 +96,30 @@ int main() {
             continue;
         }
         // send line x line
-        line = (char *)malloc(buffersize * sizeof(char));
-        fp = fopen(uri+1, "r");
-
+        // mi modificacion
+        fp = fopen(uri+1, "r"); // fopen puede abrir directorios 
+        
         if( fp != NULL){
-            while(characters = getline(&line, &buffersize, fp) != 1){
-                memset(message, 0, strlen(message));
-                strcat(message, "<html>");
-                strcat(message, line);
-                strcat(message, "<html><br>");
-                valwrite = write(newsockfd, message, strlen(message));
-            }
+            
+            memset(message, 0, strlen(message));
+            strcat(message, "<html>");
+            i = 6;
+            do {
+                i++;
+                message[i] = fgetc(fp);
+                printf(" %s \n", message); // va concardenando el mensage
+                
+                if( feof(fp)) break; //cuando llegue al final se salga
+
+            } while(1);
+            strcat(message, "<html><br>");
+            valwrite = write(newsockfd, message, strlen(message));
 
             fclose(fp);
-            if(line) free(line);
         }
         else{
             memset(message, 0, strlen(message));
-            strcat(message, "<html>no pagina disponible<html><br>");
+            strcat(message, "<html>No se encuentra el documento. <html><br>");
             valwrite = write(newsockfd, message, strlen(message));
         }
 
